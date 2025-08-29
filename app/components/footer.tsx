@@ -26,7 +26,7 @@ export default function Footer() {
             target="_blank"
             href="/rss"
           >
-            <ArrowIcon />
+
             <p className="ml-2 h-7"></p>
           </a>
         </li>
