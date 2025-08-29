@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 export default function PortfolioPreview() {
   const projects = [
     {
@@ -43,12 +45,31 @@ export default function PortfolioPreview() {
     },
   ];
 
+  const [displayText, setDisplayText] = useState("");
+  const message = "Hey, I'm Nikki Rana, what's up?";
+
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayText(message.slice(0, i + 1));
+      i++;
+      if (i === message.length) clearInterval(interval);
+    }, 80);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <main className="min-h-screen bg-[#0b0b0f] text-violet-100">
       <div className="mx-auto max-w-5xl px-4 py-12">
+        {/* Typing Animation */}
+        <h1 className="mb-8 text-4xl font-bold tracking-tight text-violet-100">
+          {displayText}
+          <span className="animate-pulse">|</span>
+        </h1>
+
         {/* Header */}
         <header className="mb-10">
-          <h1 className="text-3xl font-semibold tracking-tight">My Portfolio</h1>
+          <h2 className="text-3xl font-semibold tracking-tight">My Portfolio</h2>
           <p className="mt-3 max-w-2xl text-violet-200/80">
             I’m Nikki Rana, born and raised in Cambridge, now studying Systems Design
             Engineering at the University of Waterloo. I focus on human factors—the
@@ -106,8 +127,6 @@ export default function PortfolioPreview() {
             ))}
           </div>
         </section>
-
-    
       </div>
     </main>
   );
