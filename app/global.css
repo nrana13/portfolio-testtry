@@ -1,150 +1,140 @@
 @import 'tailwindcss';
 
+/* Lilac-on-black selection */
 ::selection {
-  background-color: #47a3f3;
-  color: #fefefe;
+  background-color: #c8a2c8; /* lilac */
+  color: #0b0b0f;            /* near-black */
 }
 
+/* ---- THEME PALETTE ---- */
 :root {
-  --sh-class: #2d5e9d;
-  --sh-identifier: #354150;
-  --sh-sign: #8996a3;
-  --sh-string: #007f7a;
-  --sh-keyword: #e02518;
+  /* core colors */
+  --bg: #0b0b0f;       /* near-black */
+  --fg: #e9d5ff;       /* lilac 100 */
+  --muted: #c8a2c8;    /* classic lilac */
+  --link: #c8a2c8;     /* link/accent */
+  --border: #1f1f26;   /* subtle border */
+  --code-bg: #0f0f14;  /* code block bg */
+
+  /* syntax highlight (kept but nudged a bit toward lilac family) */
+  --sh-class: #a78bfa;
+  --sh-identifier: #e9d5ff;
+  --sh-sign: #9aa0a6;
+  --sh-string: #86efac;
+  --sh-keyword: #f472b6;
   --sh-comment: #a19595;
-  --sh-jsxliterals: #6266d1;
-  --sh-property: #e25a1c;
-  --sh-entity: #e25a1c;
+  --sh-jsxliterals: #818cf8;
+  --sh-property: #f59e0b;
+  --sh-entity: #f59e0b;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --sh-class: #4c97f8;
-    --sh-identifier: white;
-    --sh-keyword: #f47067;
-    --sh-string: #0fa295;
-  }
-  html {
-    color-scheme: dark;
-  }
-}
+/* Always run a dark color-scheme since bg is black */
+html { color-scheme: dark; }
 
-html {
+html, body {
+  background: var(--bg);
+  color: var(--fg);
   min-width: 360px;
 }
 
+/* --- PROSE + GLOBAL ELEMENTS --- */
+
 .prose .anchor {
   @apply absolute invisible no-underline;
-
   margin-left: -1em;
   padding-right: 0.5em;
   width: 80%;
   max-width: 700px;
   cursor: pointer;
 }
-
-.anchor:hover {
-  @apply visible;
-}
+.anchor:hover { @apply visible; }
 
 .prose a {
-  @apply underline transition-all decoration-neutral-400 dark:decoration-neutral-600 underline-offset-2 decoration-[0.1em];
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--link) 60%, transparent);
+  text-underline-offset: 0.2em;
+  transition: color 150ms, text-decoration-color 150ms;
+  color: var(--link);
+}
+.prose a:hover {
+  color: var(--fg);
+  text-decoration-color: var(--fg);
 }
 
 .prose .anchor:after {
-  @apply text-neutral-300 dark:text-neutral-700;
+  color: color-mix(in oklab, var(--fg) 40%, transparent);
   content: '#';
 }
-
-.prose *:hover > .anchor {
-  @apply visible;
-}
+.prose *:hover > .anchor { @apply visible; }
 
 .prose pre {
-  @apply bg-neutral-50 dark:bg-neutral-900 rounded-lg overflow-x-auto border border-neutral-200 dark:border-neutral-900 py-2 px-3 text-sm;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
 }
-
 .prose code {
-  @apply px-1 py-0.5 rounded-lg;
+  background: color-mix(in oklab, var(--code-bg) 80%, var(--bg));
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.5rem;
 }
-
 .prose pre code {
-  @apply p-0;
+  padding: 0;
   border: initial;
   line-height: 1.5;
 }
+.prose code span { @apply font-medium; }
 
-.prose code span {
-  @apply font-medium;
-}
+.prose img { @apply m-0; }
 
-.prose img {
-  /* Don't apply styles to next/image */
-  @apply m-0;
-}
+.prose p { margin: 1rem 0; color: var(--fg); }
 
-.prose p {
-  @apply my-4 text-neutral-800 dark:text-neutral-200;
-}
-
-.prose h1 {
-  @apply text-4xl font-medium tracking-tight mt-6 mb-2;
-}
-
-.prose h2 {
-  @apply text-xl font-medium tracking-tight mt-6 mb-2;
-}
-
-.prose h3 {
-  @apply text-xl font-medium tracking-tight mt-6 mb-2;
-}
-
+.prose h1,
+.prose h2,
+.prose h3,
 .prose h4 {
-  @apply text-lg font-medium tracking-tight mt-6 mb-2;
+  color: var(--fg);
+  letter-spacing: -0.01em;
 }
+.prose h1 { @apply text-4xl font-medium mt-6 mb-2; }
+.prose h2 { @apply text-xl font-medium mt-6 mb-2; }
+.prose h3 { @apply text-xl font-medium mt-6 mb-2; }
+.prose h4 { @apply text-lg font-medium mt-6 mb-2; }
 
-.prose strong {
-  @apply font-medium;
-}
-
-.prose ul {
-  @apply list-disc pl-6;
-}
-
-.prose ol {
-  @apply list-decimal pl-6;
-}
+.prose strong { @apply font-medium; }
+.prose ul { @apply list-disc pl-6; }
+.prose ol { @apply list-decimal pl-6; }
 
 .prose > :first-child {
-  /* Override removing top margin, causing layout shift */
   margin-top: 1.25em !important;
   margin-bottom: 1.25em !important;
 }
 
-pre::-webkit-scrollbar {
-  display: none;
-}
+/* Scrollbar hiders (unchanged) */
+pre::-webkit-scrollbar { display: none; }
+pre { -ms-overflow-style: none; scrollbar-width: none; }
 
-pre {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
-/* Remove Safari input shadow on mobile */
+/* Inputs */
 input[type='text'],
 input[type='email'] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
 }
 
+/* Tables */
 table {
   display: block;
   max-width: fit-content;
   overflow-x: auto;
   white-space: nowrap;
+  border: 1px solid var(--border);
 }
 
-.title {
-  text-wrap: balance;
-}
+/* Helpers */
+.title { text-wrap: balance; }
