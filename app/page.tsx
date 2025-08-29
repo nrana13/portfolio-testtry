@@ -107,10 +107,7 @@ export default function PortfolioPreview() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="mt-10 border-t border-neutral-800/60 pt-6 text-sm text-violet-300/70">
-          © {new Date().getFullYear()} Nikki Rana · <a className="underline decoration-violet-500/50 underline-offset-2 hover:text-violet-100" href="#">@nrana13</a>
-        </footer>
+    
       </div>
     </main>
   );
