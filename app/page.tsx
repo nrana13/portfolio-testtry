@@ -1,8 +1,24 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { MoonIcon, SunIcon } from '@heroicons/react/24/solid';
 
-/** Theme toggler hook */
+/* ---- Minimal purple Sun/Moon icons (no external deps) ---- */
+function SunIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
+      <path d="M12 4.5a1 1 0 0 1 1 1V7a1 1 0 1 1-2 0V5.5a1 1 0 0 1 1-1Zm0 10.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm7-3.5a1 1 0 0 1 1 1v.01a1 1 0 1 1-2 0V12.5a1 1 0 0 1 1-1Zm-12 0a1 1 0 0 1 1 1v.01a1 1 0 1 1-2 0V12.5a1 1 0 0 1 1-1ZM5.76 6.82a1 1 0 0 1 1.41 0l1 1a1 1 0 1 1-1.41 1.41l-1-1a1 1 0 0 1 0-1.41Zm10.07 10.07a1 1 0 0 1 1.41 0l1 1a1 1 0 1 1-1.41 1.41l-1-1a1 1 0 0 1 0-1.41ZM4.5 12.5a1 1 0 0 1 1-1H7a1 1 0 1 1 0 2H5.5a1 1 0 0 1-1-1Zm10.07-4.27a1 1 0 0 1 0-1.41l1-1a1 1 0 1 1 1.41 1.41l-1 1a1 1 0 0 1-1.41 0Zm-8.66 8.66a1 1 0 0 1 0-1.41l1-1a1 1 0 0 1 1.41 1.41l-1 1a1 1 0 0 1-1.41 0Zm6.09 1.59a1 1 0 0 1 1-1H13a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1Z" />
+    </svg>
+  );
+}
+
+function MoonIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
+      <path d="M21 12.75A9.25 9.25 0 0 1 9.02 21a.75.75 0 0 1-.53-1.3 7.75 7.75 0 0 0 9.8-9.8.75.75 0 0 1 1.3-.53c.89.95 1.41 2.22 1.41 3.88Z" />
+    </svg>
+  );
+}
+
+/* ---- Theme toggler (class-based dark mode + persistence) ---- */
 function useTheme() {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const initialized = useRef(false);
@@ -81,7 +97,7 @@ const projects: Project[] = [
   },
 ];
 
-/** Reveal animation on scroll */
+/* ---- Scroll reveal (subtle) ---- */
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [shown, setShown] = useState(false);
@@ -121,6 +137,7 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 export default function Page() {
   const { theme, setTheme } = useTheme();
 
+  // Typewriter headline
   const [displayText, setDisplayText] = useState('');
   const message = "Hey, I'm Nikki Rana, what's up?";
 
@@ -135,16 +152,15 @@ export default function Page() {
   }, []);
 
   return (
+    // Original solid bg; soft purple glow only in dark mode
     <main className="relative min-h-screen overflow-hidden bg-white text-neutral-900 dark:bg-[#0b0b0f] dark:text-violet-100">
-      {/* Glow background only in dark mode */}
       <div className="pointer-events-none absolute inset-0 hidden dark:block">
         <div className="absolute inset-0 bg-[radial-gradient(600px_300px_at_20%_0%,rgba(168,85,247,0.16),transparent_60%)] blur-2xl" />
         <div className="absolute inset-0 bg-[radial-gradient(500px_260px_at_100%_20%,rgba(139,92,246,0.12),transparent_60%)] blur-2xl" />
       </div>
 
-      {/* Content */}
       <div className="relative mx-auto max-w-5xl px-4 py-12">
-        {/* Toggle button */}
+        {/* Theme toggle (minimal, purple, icons) */}
         <div className="mb-6 flex items-center justify-end">
           <button
             type="button"
@@ -192,7 +208,6 @@ export default function Page() {
             {projects.map((p, idx) => (
               <Reveal key={p.title} delay={idx * 80}>
                 <article className="group rounded-2xl border border-neutral-200 bg-white/80 p-5 shadow-sm transition-all hover:shadow-md dark:border-neutral-800 dark:bg-black/20 dark:hover:shadow-purple-500/10">
-                  {/* Image placeholder */}
                   <div className="relative mb-4 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900">
                     <div className="flex h-48 items-center justify-center text-sm text-neutral-400">
                       (Project image here)
