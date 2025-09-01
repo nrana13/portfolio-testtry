@@ -39,18 +39,22 @@ html, body {
 /* --- PROSE + GLOBAL ELEMENTS --- */
 
 .prose .anchor {
-  @apply absolute invisible no-underline;
+  /* tailwind apply is safe */
+  display: inline-block;
+  position: absolute;
+  visibility: hidden;
+  text-decoration: none;
   margin-left: -1em;
   padding-right: 0.5em;
   width: 80%;
   max-width: 700px;
   cursor: pointer;
 }
-.anchor:hover { @apply visible; }
+.anchor:hover { visibility: visible; }
 
 .prose a {
   text-decoration: underline;
-  text-decoration-color: color-mix(in oklab, var(--link) 60%, transparent);
+  text-decoration-color: #c8a2c8;
   text-underline-offset: 0.2em;
   transition: color 150ms, text-decoration-color 150ms;
   color: var(--link);
@@ -61,10 +65,10 @@ html, body {
 }
 
 .prose .anchor:after {
-  color: color-mix(in oklab, var(--fg) 40%, transparent);
+  color: rgba(233, 213, 255, 0.4);
   content: '#';
 }
-.prose *:hover > .anchor { @apply visible; }
+.prose *:hover > .anchor { visibility: visible; }
 
 .prose pre {
   background: var(--code-bg);
@@ -75,7 +79,7 @@ html, body {
   font-size: 0.875rem;
 }
 .prose code {
-  background: color-mix(in oklab, var(--code-bg) 80%, var(--bg));
+  background: #0d0d13;
   padding: 0.125rem 0.25rem;
   border-radius: 0.5rem;
 }
@@ -84,9 +88,7 @@ html, body {
   border: initial;
   line-height: 1.5;
 }
-.prose code span { @apply font-medium; }
-
-.prose img { @apply m-0; }
+.prose img { margin: 0; }
 
 .prose p { margin: 1rem 0; color: var(--fg); }
 
@@ -97,14 +99,14 @@ html, body {
   color: var(--fg);
   letter-spacing: -0.01em;
 }
-.prose h1 { @apply text-4xl font-medium mt-6 mb-2; }
-.prose h2 { @apply text-xl font-medium mt-6 mb-2; }
-.prose h3 { @apply text-xl font-medium mt-6 mb-2; }
-.prose h4 { @apply text-lg font-medium mt-6 mb-2; }
+.prose h1 { font-size: 2.25rem; font-weight: 500; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+.prose h2 { font-size: 1.25rem; font-weight: 500; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+.prose h3 { font-size: 1.25rem; font-weight: 500; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+.prose h4 { font-size: 1.125rem; font-weight: 500; margin-top: 1.5rem; margin-bottom: 0.5rem; }
 
-.prose strong { @apply font-medium; }
-.prose ul { @apply list-disc pl-6; }
-.prose ol { @apply list-decimal pl-6; }
+.prose strong { font-weight: 500; }
+.prose ul { list-style: disc; padding-left: 1.5rem; }
+.prose ol { list-style: decimal; padding-left: 1.5rem; }
 
 .prose > :first-child {
   margin-top: 1.25em !important;
@@ -138,73 +140,77 @@ table {
 /* Helpers */
 .title { text-wrap: balance; }
 
-/* ---- CUSTOM UTILITIES ---- */
-@layer utilities {
-  /* Aurora full-screen background */
-  .aurora {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: -1;
-    overflow: hidden;
-  }
-  .aurora-wrap {
-    position: absolute;
-    inset: -4rem;
-    opacity: 0.6;
-    filter: blur(48px);
-  }
-  .aurora-band {
-    position: absolute;
-    border-radius: 9999px;
-    will-change: transform;
-  }
-  .aurora-1 {
-    left: -30%;
-    top: -10%;
-    width: 80vw;
-    height: 60vh;
-    background: linear-gradient(110deg, rgba(168,85,247,0.18), rgba(99,102,241,0.10), transparent 70%);
-    animation: aurora1 18s ease-in-out infinite alternate;
-  }
-  .aurora-2 {
-    right: -25%;
-    top: 10%;
-    width: 70vw;
-    height: 55vh;
-    background: linear-gradient(250deg, rgba(139,92,246,0.16), rgba(124,58,237,0.10), transparent 70%);
-    animation: aurora2 22s ease-in-out infinite alternate;
-  }
-  .aurora-3 {
-    left: 10%;
-    bottom: -20%;
-    width: 80vw;
-    height: 50vh;
-    background: linear-gradient(200deg, rgba(192,132,252,0.14), rgba(168,85,247,0.10), transparent 70%);
-    animation: aurora3 28s ease-in-out infinite alternate;
-  }
+/* ---- AURORA BACKGROUND (no @layer, no color-mix) ---- */
+.aurora {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+.aurora-wrap {
+  position: absolute;
+  inset: -4rem;          /* extend past edges */
+  opacity: 0.6;
+  filter: blur(48px);
+}
+.aurora-band {
+  position: absolute;
+  border-radius: 9999px;
+  will-change: transform;
+}
 
-  @keyframes aurora1 {
-    0% { transform: translateX(0) translateY(0); }
-    100% { transform: translateX(18vw) translateY(2vh); }
-  }
-  @keyframes aurora2 {
-    0% { transform: translateX(0) translateY(0); }
-    100% { transform: translateX(-22vw) translateY(-3vh); }
-  }
-  @keyframes aurora3 {
-    0% { transform: translateX(0) translateY(0); }
-    100% { transform: translateX(14vw) translateY(-1vh); }
-  }
+/* three drifting bands */
+.aurora-1 {
+  left: -30%;
+  top: -10%;
+  width: 80vw;
+  height: 60vh;
+  background: linear-gradient(110deg, rgba(168,85,247,0.18), rgba(99,102,241,0.10), transparent 70%);
+  animation: aurora1 18s ease-in-out infinite alternate;
+}
+.aurora-2 {
+  right: -25%;
+  top: 10%;
+  width: 70vw;
+  height: 55vh;
+  background: linear-gradient(250deg, rgba(139,92,246,0.16), rgba(124,58,237,0.10), transparent 70%);
+  animation: aurora2 22s ease-in-out infinite alternate;
+}
+.aurora-3 {
+  left: 10%;
+  bottom: -20%;
+  width: 80vw;
+  height: 50vh;
+  background: linear-gradient(200deg, rgba(192,132,252,0.14), rgba(168,85,247,0.10), transparent 70%);
+  animation: aurora3 28s ease-in-out infinite alternate;
+}
 
-  /* Glass surfaces */
-  .glass {
-    background-color: rgba(255,255,255,0.03);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-    border-radius: 1.5rem;
-  }
-  .glass-ring { box-shadow: 0 0 0 1px rgba(255,255,255,0.10) inset; }
-  .card { background-color: rgba(255,255,255,0.035); }
-  .card:hover { background-color: rgba(255,255,255,0.05); }
+@keyframes aurora1 {
+  0%   { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(18vw) translateY(2vh); }
+}
+@keyframes aurora2 {
+  0%   { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(-22vw) translateY(-3vh); }
+}
+@keyframes aurora3 {
+  0%   { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(14vw) translateY(-1vh); }
+}
+
+/* ---- GLASS SURFACES ---- */
+.glass {
+  background-color: rgba(255,255,255,0.03);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border-radius: 1.5rem;
+}
+.glass-ring { box-shadow: 0 0 0 1px rgba(255,255,255,0.10) inset; }
+.card { background-color: rgba(255,255,255,0.035); }
+.card:hover { background-color: rgba(255,255,255,0.05); }
+
+/* Reduced motion: stop the drift but keep a soft static glow */
+@media (prefers-reduced-motion: reduce) {
+  .aurora-1, .aurora-2, .aurora-3 { animation: none; }
 }
