@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Project = {
   title: string;
@@ -52,9 +52,57 @@ const projects: Project[] = [
   },
 ];
 
+/** Small client component that fades/slides content in when scrolled into view */
+function Reveal({
+  children,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  delay?: number; // ms
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            setShown(true);
+            obs.disconnect(); // reveal once
+          }
+        });
+      },
+      {
+        threshold: 0.15,
+        rootMargin: '0px 0px -80px 0px', // start a bit before center
+      }
+    );
+
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      style={{ transitionDelay: `${delay}ms` }}
+      className={[
+        'transform-gpu transition-all duration-500 ease-out will-change-[opacity,transform]',
+        shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3',
+      ].join(' ')}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default function Page() {
   const [displayText, setDisplayText] = useState('');
-  const message = "Hey, I'm Nikki, what's up?";
+  const message = "Hey, I'm Nikki Rana, what's up?";
 
   useEffect(() => {
     let i = 0;
@@ -67,8 +115,13 @@ export default function Page() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#0b0b0f] text-violet-100">
-      <div className="mx-auto max-w-5xl px-4 py-12">
+    <main className="relative min-h-screen overflow-hidden bg-[#0b0b0f] text-violet-100">
+      {/* Background effect: diagonal glowing lines */}
+      <div className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(135deg,rgba(168,85,247,0.15)_0px,rgba(168,85,247,0.15)_2px,transparent_2px,transparent_20px)] blur-sm"></div>
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(168,85,247,0.2),transparent_60%)] blur-3xl"></div>
+
+      {/* Content */}
+      <div className="relative mx-auto max-w-5xl px-4 py-12">
         {/* Typing headline */}
         <h1 className="mb-8 text-4xl font-bold tracking-tight text-violet-100">
           {displayText}
@@ -79,14 +132,16 @@ export default function Page() {
         <header className="mb-10">
           <h2 className="text-3xl font-semibold tracking-tight">My Portfolio</h2>
           <p className="mt-3 max-w-2xl text-violet-200/80">
-            I’m Nikki Rana, born and raised in Cambridge, now studying Systems Design
-            Engineering at the University of Waterloo. I focus on human factors—the
-            intersection of product, design, and how people actually experience tech.
-            I like the tiny details that make things easier and the bigger picture of
-            how design shapes lives. Outside of school I’ve organized coding
-            competitions, mentored across programs, joined panels, and when I’m not
-            doing something vaguely productive, I’m probably annoying my older
-            siblings or cooking.
+            I’m Nikki Rana, born and raised in Cambridge, now studying Systems
+            Design Engineering at the University of Waterloo. I focus on human
+            factors—the intersection of product, design, and how people actually
+            experience tech. I like the tiny details that make things easier and
+            the bigger picture of how design shapes lives.
+          </p>
+          <p className="mt-3 max-w-2xl text-violet-200/80">
+            Outside of school I’ve organized coding competitions, mentored across
+            programs, joined panels, and when I’m not doing something vaguely
+            productive, I’m probably annoying my older siblings or cooking.
           </p>
         </header>
 
@@ -94,59 +149,60 @@ export default function Page() {
         <section className="mt-6">
           <h3 className="mb-4 text-lg font-medium text-violet-200">Projects</h3>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {projects.map((p) => (
-              <article
-                key={p.title}
-                className="group rounded-2xl border border-neutral-800/60 bg-black/20 p-5 transition-all hover:shadow-lg hover:shadow-purple-500/10"
-              >
-                {/* Image placeholder (replace with <Image> later if you have files) */}
-                <div className="relative mb-4 overflow-hidden rounded-xl border border-neutral-800/60 bg-neutral-900">
-                  <div className="flex h-48 items-center justify-center text-sm text-neutral-400">
-                    (Project image here)
+            {projects.map((p, idx) => (
+              <Reveal key={p.title} delay={idx * 80}>
+                <article className="group rounded-2xl border border-neutral-800/60 bg-black/20 p-5 transition-all hover:shadow-lg hover:shadow-purple-500/10">
+                  {/* Image placeholder (swap for <Image> when ready) */}
+                  <div className="relative mb-4 overflow-hidden rounded-xl border border-neutral-800/60 bg-neutral-900">
+                    <div className="flex h-48 items-center justify-center text-sm text-neutral-400">
+                      (Project image here)
+                    </div>
                   </div>
-                </div>
 
-                <h4 className="text-xl font-semibold tracking-tight text-violet-200">
-                  {p.title}
-                </h4>
+                  <h4 className="text-xl font-semibold tracking-tight text-violet-200">
+                    {p.title}
+                  </h4>
 
-                <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-violet-300/90">
-                  {p.subtitle && (
-                    <span className="text-violet-300/80">{p.subtitle}</span>
+                  <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-violet-300/90">
+                    {p.subtitle && (
+                      <span className="text-violet-300/80">{p.subtitle}</span>
+                    )}
+                    {p.links && p.links.length > 0 && (
+                      <>
+                        <span aria-hidden="true" className="text-violet-400/40">
+                          •
+                        </span>
+                        <nav
+                          aria-label={`${p.title} links`}
+                          className="flex flex-wrap gap-2"
+                        >
+                          {p.links.map((l) => (
+                            <a
+                              key={l.href + l.label}
+                              href={l.href}
+                              className="underline decoration-violet-500/50 underline-offset-2 hover:text-violet-100 hover:decoration-violet-300"
+                              target={l.href.startsWith('/') ? '_self' : '_blank'}
+                              rel={
+                                l.href.startsWith('/')
+                                  ? undefined
+                                  : 'noopener noreferrer'
+                              }
+                            >
+                              {l.label}
+                            </a>
+                          ))}
+                        </nav>
+                      </>
+                    )}
+                  </div>
+
+                  {p.caption && (
+                    <p className="mt-3 text-sm leading-relaxed text-violet-100/80">
+                      {p.caption}
+                    </p>
                   )}
-                  {p.links && p.links.length > 0 && (
-                    <>
-                      <span aria-hidden="true" className="text-violet-400/40">
-                        •
-                      </span>
-                      <nav
-                        aria-label={`${p.title} links`}
-                        className="flex flex-wrap gap-2"
-                      >
-                        {p.links.map((l) => (
-                          <a
-                            key={l.href + l.label}
-                            href={l.href}
-                            className="underline decoration-violet-500/50 underline-offset-2 hover:text-violet-100 hover:decoration-violet-300"
-                            target={l.href.startsWith('/') ? '_self' : '_blank'}
-                            rel={
-                              l.href.startsWith('/') ? undefined : 'noopener noreferrer'
-                            }
-                          >
-                            {l.label}
-                          </a>
-                        ))}
-                      </nav>
-                    </>
-                  )}
-                </div>
-
-                {p.caption && (
-                  <p className="mt-3 text-sm leading-relaxed text-violet-100/80">
-                    {p.caption}
-                  </p>
-                )}
-              </article>
+                </article>
+              </Reveal>
             ))}
           </div>
         </section>
