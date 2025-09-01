@@ -83,7 +83,6 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 }
 
 export default function Page() {
-  // Typewriter headline
   const [displayText, setDisplayText] = useState('');
   const message = "Hey, I'm Nikki Rana, what's up?";
 
@@ -99,36 +98,19 @@ export default function Page() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#0b0b0f] text-violet-100">
-      {/* FULL-SCREEN ANIMATED AURORA (no circles, no stripes) */}
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        {/* Three soft bands that drift horizontally at different speeds */}
-        <div className="absolute -inset-1 opacity-60 [filter:blur(40px)]">
-          <div className="absolute left-[-30%] top-[-10%] h-[60vh] w-[80vw] animate-[aurora1_18s_ease-in-out_infinite_alternate] bg-[linear-gradient(110deg,rgba(168,85,247,0.18),rgba(99,102,241,0.10),transparent_70%)]" />
-          <div className="absolute right-[-25%] top-[10%] h-[55vh] w-[70vw] animate-[aurora2_22s_ease-in-out_infinite_alternate] bg-[linear-gradient(250deg,rgba(139,92,246,0.16),rgba(124,58,237,0.10),transparent_70%)]" />
-          <div className="absolute left-[10%] bottom-[-20%] h-[50vh] w-[80vw] animate-[aurora3_28s_ease-in-out_infinite_alternate] bg-[linear-gradient(200deg,rgba(192,132,252,0.14),rgba(168,85,247,0.10),transparent_70%)]" />
+      {/* Full-screen animated aurora, behind everything */}
+      <div className="aurora">
+        <div className="aurora-wrap">
+          <div className="aurora-band aurora-1" />
+          <div className="aurora-band aurora-2" />
+          <div className="aurora-band aurora-3" />
         </div>
       </div>
 
-      {/* Local keyframes for aurora motion */}
-      <style jsx global>{`
-        @keyframes aurora1 {
-          0% { transform: translateX(0) translateY(0) }
-          100% { transform: translateX(18vw) translateY(2vh) }
-        }
-        @keyframes aurora2 {
-          0% { transform: translateX(0) translateY(0) }
-          100% { transform: translateX(-22vw) translateY(-3vh) }
-        }
-        @keyframes aurora3 {
-          0% { transform: translateX(0) translateY(0) }
-          100% { transform: translateX(14vw) translateY(-1vh) }
-        }
-      `}</style>
-
       {/* Content */}
       <div className="relative mx-auto max-w-5xl px-4 py-12">
-        {/* Soft container that FADES into bg (no harsh rectangle) */}
-        <section className="rounded-3xl bg-white/[0.02] p-6 ring-1 ring-white/10 backdrop-blur-[2px]">
+        {/* Soft container that blends into bg */}
+        <section className="glass glass-ring p-6">
           {/* Typing headline */}
           <h1 className="mb-6 text-4xl font-bold tracking-tight drop-shadow-[0_1px_0_rgba(0,0,0,0.4)]">
             {displayText}
@@ -158,7 +140,7 @@ export default function Page() {
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {projects.map((p, idx) => (
                 <Reveal key={p.title} delay={idx * 80}>
-                  <article className="group rounded-2xl bg-white/[0.03] p-5 ring-1 ring-white/10 backdrop-blur-[2px] transition-all hover:bg-white/[0.05] hover:ring-white/20">
+                  <article className="group rounded-2xl p-5 card ring-1 ring-white/10 backdrop-blur-[2px] transition-all hover:ring-white/20 hover:brightness-110">
                     {/* Image placeholder (swap for <Image> later) */}
                     <div className="relative mb-4 overflow-hidden rounded-xl bg-neutral-900/60 ring-1 ring-white/10">
                       <div className="flex h-48 items-center justify-center text-sm text-neutral-400">
@@ -170,4 +152,38 @@ export default function Page() {
                       {p.title}
                     </h4>
 
-                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-vi
+                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-violet-300/90">
+                      {p.subtitle && <span className="text-violet-300/85">{p.subtitle}</span>}
+                      {p.links && p.links.length > 0 && (
+                        <>
+                          <span aria-hidden="true" className="text-violet-400/40">•</span>
+                          <nav aria-label={`${p.title} links`} className="flex flex-wrap gap-2">
+                            {p.links.map((l) => (
+                              <a
+                                key={l.href + l.label}
+                                href={l.href}
+                                className="underline decoration-violet-500/50 underline-offset-2 hover:text-violet-100 hover:decoration-violet-300"
+                              >
+                                {l.label}
+                              </a>
+                            ))}
+                          </nav>
+                        </>
+                      )}
+                    </div>
+
+                    {p.caption && (
+                      <p className="mt-3 text-sm leading-relaxed text-violet-100/80">
+                        {p.caption}
+                      </p>
+                    )}
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+  );
+}
