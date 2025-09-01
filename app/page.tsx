@@ -84,7 +84,7 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 
 export default function Page() {
   const [displayText, setDisplayText] = useState('');
-  const message = "Hey, I'm Nikki Rana, what's up?";
+  const message = "Hey, I'm Nikki, what's up?";
 
   useEffect(() => {
     let i = 0;
